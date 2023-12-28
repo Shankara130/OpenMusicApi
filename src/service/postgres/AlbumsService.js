@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
@@ -39,6 +38,22 @@ class AlbumsService {
             text: 'SELECT * FROM albums WHERE id = $1',
             values: [id],
         };
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new NotFoundError('Album tidak ditemukan');
+        }
+
+        return result.rows.map(mapDbToModel)[0];
+    }
+
+    async editAlbumById(id, { name, year }) {
+        const updatedAt = new Date().toISOString();
+        const query = {
+            text: 'UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE id = $4 RETURNING id',
+            values: [name, year, updatedAt, id],
+        };
+
         const result = await this._pool.query(query);
 
         if (!result.rows.length) {

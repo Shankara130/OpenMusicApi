@@ -8,8 +8,8 @@ const mapDbToModel = ({
     id,
     name,
     year,
-    createdAT: created_at,
-    updatedAT: updated_at,
+    createdAt: created_at,
+    updatedAt: updated_at,
 });
 
 module.exports = { mapDbToModel };
