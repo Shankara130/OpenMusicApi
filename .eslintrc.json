@@ -12,6 +12,8 @@
         "indent": "off",
         "no-underscore-dangle": "off",
         "no-console": "off",
-        "camelcase":"off"
+        "camelcase":"off",
+        "max-len":"off",
+        "object-curly-newline":"off"
     }
 }
