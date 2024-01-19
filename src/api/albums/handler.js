@@ -48,11 +48,11 @@ class AlbumsHandler {
         };
     }
 
-    putAlbumByIdHandler(request, h) {
+    async putAlbumByIdHandler(request, h) {
         this._validator.validateAlbumsPayload(request.payload);
         const { id } = request.params;
 
-        this._service.editAlbumById(id, request.payload);
+        await this._service.editAlbumById(id, request.payload);
 
         return {
             status: 'success',
@@ -60,9 +60,9 @@ class AlbumsHandler {
         };
     }
 
-    deleteAlbumByIdHandler(request, h) {
+    async deleteAlbumByIdHandler(request, h) {
         const { id } = request.params;
-        this._service.deleteAlbumById(id);
+        await this._service.deleteAlbumById(id);
         return {
             status: 'success',
             message: 'Album berhasil dihapus',

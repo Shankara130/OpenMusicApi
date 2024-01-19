@@ -14,7 +14,7 @@ const mapAlbumsDbToModel = ({
     updatedAt: updated_at,
 });
 
-const mapSongDbToModle = ({
+const mapSongDbToModel = ({
     id,
     title,
     year,
@@ -38,4 +38,4 @@ const mapSongDbToModle = ({
 const filterTitleSongByParam = (song, title) => (song.title.toLowerCase().includes(title));
 const filterPerformerSongByParam = (song, performer) => (song.performer.toLowerCase().includes(performer));
 
-module.exports = { mapAlbumsDbToModel, mapSongDbToModle, filterPerformerSongByParam, filterTitleSongByParam };
+module.exports = { mapAlbumsDbToModel, mapSongDbToModel, filterPerformerSongByParam, filterTitleSongByParam };
