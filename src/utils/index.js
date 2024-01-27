@@ -35,7 +35,13 @@ const mapSongDbToModel = ({
     createdAt: created_at,
     updatedAt: updated_at,
 });
+
+const mapPlaylistDbToModel = (playlist) => ({
+        id: playlist.id,
+        name: playlist.name,
+        username: playlist.username,
+    });
 const filterTitleSongByParam = (song, title) => (song.title.toLowerCase().includes(title));
 const filterPerformerSongByParam = (song, performer) => (song.performer.toLowerCase().includes(performer));
 
-module.exports = { mapAlbumsDbToModel, mapSongDbToModel, filterPerformerSongByParam, filterTitleSongByParam };
+module.exports = { mapAlbumsDbToModel, mapSongDbToModel, filterPerformerSongByParam, filterTitleSongByParam, mapPlaylistDbToModel };
