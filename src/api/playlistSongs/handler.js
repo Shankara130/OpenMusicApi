@@ -1,9 +1,10 @@
 const autoBind = require('auto-bind');
 
 class PlaylistSongsHandler {
-    constructor(playlistsService, playlistSongsService, validator) {
+    constructor(playlistsService, playlistSongsService, playlistSongActivitiesService, validator) {
         this._playlistsService = playlistsService;
         this._playlistSongsService = playlistSongsService;
+        this._playlistSongActivitiesService = playlistSongActivitiesService;
         this._validator = validator;
 
         autoBind(this);
@@ -18,6 +19,7 @@ class PlaylistSongsHandler {
 
         await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
         const playlistsongId = await this._playlistSongsService.addSongToPlaylist(playlistId, songId);
+        await this._playlistSongActivitiesService.activitiesAddSongToPlaylist(playlistId, songId, credentialId);
 
         const response = h.response({
             status: 'success',
@@ -55,10 +57,26 @@ class PlaylistSongsHandler {
 
         await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
         await this._playlistSongsService.deleteSongPlaylist(playlistId, songId);
+        await this._playlistSongActivitiesService.activitiesDeleteSongPlaylist(playlistId, songId, credentialId);
 
         return {
             status: 'success',
             message: 'Lagu berhasil dihapus',
+        };
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    async getActivitiesPlaylistHandler(request, h) {
+        const { id: credentialId } = request.auth.credentials;
+        const { id: playlistId } = request.params;
+
+        await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+
+        const activities = await this._playlistSongActivitiesService.getActivitiesPlaylist(playlistId);
+
+        return {
+            status: 'success',
+            data: activities,
         };
     }
 }
