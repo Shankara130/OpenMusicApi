@@ -42,6 +42,7 @@ class PlayslistsHandler {
         };
     }
 
+    // eslint-disable-next-line no-unused-vars
     async deletePlaylistHandler(request, h) {
         const { id } = request.params;
         const { id: credentialId } = request.auth.credentials;
