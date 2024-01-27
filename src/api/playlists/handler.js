@@ -21,11 +21,11 @@ class PlayslistsHandler {
             status: 'success',
             message: 'Playlist berhasil ditambahkan',
             data: {
-              playlistId,
+                playlistId,
             },
-          });
-          response.code(201);
-          return response;
+        });
+        response.code(201);
+        return response;
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -37,17 +37,21 @@ class PlayslistsHandler {
         return {
             status: 'success',
             data: {
-              playlists,
+                playlists,
             },
         };
     }
 
     async deletePlaylistHandler(request, h) {
         const { id } = request.params;
+        const { id: credentialId } = request.auth.credentials;
 
+        await this._service.verifyPlaylistOwner(id, credentialId);
         await this._service.deletePlaylist(id);
-
-        return h.response().code(204);
+        return {
+            status: 'success',
+            message: 'Playlist berhasil dihapus',
+        };
     }
 }
 

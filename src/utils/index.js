@@ -37,10 +37,12 @@ const mapSongDbToModel = ({
 });
 
 const mapPlaylistDbToModel = (playlist) => ({
-        id: playlist.id,
-        name: playlist.name,
-        username: playlist.username,
-    });
+    id: playlist.id,
+    name: playlist.name,
+    username: playlist.username,
+    songs: playlist.songs,
+});
+
 const filterTitleSongByParam = (song, title) => (song.title.toLowerCase().includes(title));
 const filterPerformerSongByParam = (song, performer) => (song.performer.toLowerCase().includes(performer));
 
