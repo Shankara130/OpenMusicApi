@@ -6,8 +6,9 @@ const InvariantError = require('../../exceptions/InvariantError');
 const { mapPlaylistDbToModel } = require('../../utils');
 
 class PlaylistService {
-    constructor() {
+    constructor(collaborationsService) {
         this._pool = new Pool();
+        this._collaborationsService = collaborationsService;
     }
 
     async addPlaylist({ name, owner }) {
@@ -55,20 +56,36 @@ class PlaylistService {
 
     async verifyPlaylistOwner(id, owner) {
         const query = {
-            text: 'SELECT * FROM playlists WHERE id = $1 ',
+            text: 'SELECT owner FROM playlists WHERE id = $1 ',
             values: [id],
         };
 
         const result = await this._pool.query(query);
 
-        if (!result.rows.length) {
-            throw new NotFoundError('Playlist tidak ditemukan');
+        if (!result.rowCount) {
+            throw new NotFoundError('User tidak ditemukan');
         }
 
         const playlist = result.rows[0];
 
         if (playlist.owner !== owner) {
             throw new AuthorizationError('Anda tidak memiliki akses ke playlist ini');
+        }
+    }
+
+    async verifyPlaylistAccess(playlistId, userId) {
+        try {
+            await this.verifyPlaylistOwner(playlistId, userId);
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+
+            try {
+                await this._collaborationsService.verifyCollaborator(playlistId, userId);
+            } catch {
+                throw error;
+            }
         }
     }
 }
