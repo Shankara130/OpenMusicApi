@@ -101,9 +101,18 @@ class AlbumsHandler {
 
         const likes = await this._service.getAlbumLikes(id);
 
+        if (likes.isCache === true) {
+            const response = h.response({
+                status: 'success',
+                data: likes.result,
+            });
+            response.header('X-Data-Source', 'cache');
+            return response;
+        }
+
         return {
             status: 'success',
-            data: likes,
+            data: likes.result,
         };
     }
 }

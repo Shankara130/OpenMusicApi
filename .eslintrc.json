@@ -15,6 +15,6 @@
         "camelcase":"off",
         "max-len":"off",
         "object-curly-newline":"off",
-        "radix":"off",
+        "radix":"off"
     }
 }
