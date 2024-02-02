@@ -43,7 +43,11 @@ const mapPlaylistDbToModel = (playlist) => ({
     songs: playlist.songs,
 });
 
+const mapDBToAlbumLike = (count) => ({
+    likes: parseInt(count),
+});
+
 const filterTitleSongByParam = (song, title) => (song.title.toLowerCase().includes(title));
 const filterPerformerSongByParam = (song, performer) => (song.performer.toLowerCase().includes(performer));
 
-module.exports = { mapAlbumsDbToModel, mapSongDbToModel, filterPerformerSongByParam, filterTitleSongByParam, mapPlaylistDbToModel };
+module.exports = { mapAlbumsDbToModel, mapSongDbToModel, filterPerformerSongByParam, filterTitleSongByParam, mapPlaylistDbToModel, mapDBToAlbumLike };

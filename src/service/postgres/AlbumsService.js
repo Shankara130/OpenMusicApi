@@ -1,7 +1,7 @@
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
-const { mapAlbumsDbToModel } = require('../../utils');
+const { mapAlbumsDbToModel, mapDBToAlbumLike } = require('../../utils');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class AlbumsService {
@@ -92,10 +92,56 @@ class AlbumsService {
         const result = await this._pool.query(query);
 
         if (!result.rows.length) {
-            throw new NotFoundError(
-                'Album tidak ditemukan',
-            );
+            throw new NotFoundError('Album tidak ditemukan');
         }
+    }
+
+    async addLikeToAlbum(userId, albumId) {
+        const queryLike = {
+            text: 'SELECT * FROM useralbumlikes WHERE "userId" = $1 AND "albumId" = $2',
+            values: [userId, albumId],
+        };
+
+        const existingLike = await this._pool.query(queryLike);
+
+        if (existingLike.rows.length > 0) {
+            throw new InvariantError('Gagal menambahkan like. Like sudah ada');
+        }
+        const id = nanoid(16);
+        const query = {
+            text: 'INSERT INTO useralbumlikes VALUES($1, $2, $3) RETURNING id',
+            values: [id, userId, albumId],
+        };
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows[0].id) {
+            throw new InvariantError('Gagal menambahkan like');
+        }
+    }
+
+    async deleteLikeFromAlbum(userId, albumId) {
+        const query = {
+            text: 'DELETE FROM useralbumlikes WHERE "userId" = $1 AND "albumId" = $2 RETURNING id',
+            values: [userId, albumId],
+        };
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new NotFoundError('Gagal menghapus like. Like tidak ditemukan');
+        }
+    }
+
+    async getAlbumLikes(albumId) {
+        const query = {
+            text: 'SELECT COUNT("albumId") FROM useralbumlikes WHERE "albumId" = $1',
+            values: [albumId],
+        };
+
+        const result = await this._pool.query(query);
+
+        return mapDBToAlbumLike(result.rows[0].count);
     }
 }
 
