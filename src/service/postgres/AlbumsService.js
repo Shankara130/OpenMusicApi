@@ -37,23 +37,24 @@ class AlbumsService {
         const queryAlbum = {
             text: 'SELECT * FROM albums WHERE id = $1',
             values: [id],
-          };
-          const querySong = {
+        };
+        const querySong = {
             text: 'SELECT songs.id, songs.title, songs.performer FROM songs INNER JOIN albums ON albums.id=songs."albumId" WHERE albums.id=$1',
             values: [id],
-          };
-          const resultAlbum = await this._pool.query(queryAlbum);
-          const resultSong = await this._pool.query(querySong);
+        };
+        const resultAlbum = await this._pool.query(queryAlbum);
+        const resultSong = await this._pool.query(querySong);
 
-          if (!resultAlbum.rows.length) {
+        if (!resultAlbum.rows.length) {
             throw new NotFoundError('Album tidak ditemukan');
-          }
-          return {
+        }
+        return {
             id: resultAlbum.rows[0].id,
             name: resultAlbum.rows[0].name,
             year: resultAlbum.rows[0].year,
+            coverUrl: resultAlbum.rows[0].cover,
             songs: resultSong.rows,
-          };
+        };
     }
 
     async editAlbumById(id, { name, year }) {
@@ -80,6 +81,20 @@ class AlbumsService {
 
         if (!result.rows.length) {
             throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
+        }
+    }
+
+    async updateAlbumCover(id, coverUrl) {
+        const query = {
+            text: 'UPDATE albums SET cover =$1 WHERE id = $2 RETURNING id',
+            values: [coverUrl, id],
+        };
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new NotFoundError(
+                'Album tidak ditemukan',
+            );
         }
     }
 }
